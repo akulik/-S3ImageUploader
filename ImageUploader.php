@@ -25,6 +25,15 @@ class ImageUploader extends Component
     private $client;
 
     /**
+     * PSR-3 compatible logger object
+     *
+     * @link http://www.php-fig.org/psr/psr-3/
+     * @var  object
+     * @see  setLogger()
+     */
+    protected $logger;
+
+    /**
      * ImageUploader constructor.
      */
     public function __construct()
@@ -169,9 +178,15 @@ class ImageUploader extends Component
                 return $result->get('ObjectURL');
             }
         } catch (S3Exception $e) {
-            die('Error:' . $e->getMessage());
+            $this->log(
+                'error',
+                $e->getMessage()
+            );
         } catch (Exception $e) {
-            die('Error:' . $e->getMessage());
+            $this->log(
+                'error',
+                $e->getMessage()
+            );
         }
 
         return false;
@@ -258,5 +273,33 @@ class ImageUploader extends Component
         $ratio = round($height / $width, 5);
 
         return round($max_size * $ratio);
+    }
+
+    /**
+     * Sets a logger instance on the object
+     *
+     * @param LoggerInterface $logger PSR-3 compatible logger object
+     *
+     * @return null
+     */
+    public function setLogger($logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
+     * Log a message to the $logger object
+     *
+     * @param string $level   Logging level
+     * @param string $message Text to log
+     * @param array  $context Additional information
+     *
+     * @return null
+     */
+    protected function log($level, $message, array $context = array())
+    {
+        if ($this->logger) {
+            $this->logger->log($level, $message, $context);
+        }
     }
 }
