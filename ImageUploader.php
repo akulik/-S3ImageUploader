@@ -11,6 +11,7 @@ use Phalcon\Http\Request\File;
 use Phalcon\Mvc\User\Component;
 use App\Frontend\Models\Image;
 use Aws\S3\Exception\S3Exception;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class ImageUploader
@@ -282,7 +283,7 @@ class ImageUploader extends Component
      *
      * @return null
      */
-    public function setLogger($logger)
+    public function setLogger(LoggerInterface $logger)
     {
         $this->logger = $logger;
     }
